@@ -349,10 +349,11 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             print(f'vr_volumen: {vol_resul}')
             print(f'vr_agua : {vol_act[4]}')
             print(f'vr_temp : {vol_act[5]}')
+
             
             query = "SELECT id FROM entregas ORDER BY ID DESC LIMIT 1"
             cur.execute(query)
-            id_entrega = cur.fetchone
+            id_entrega = cur.fetchone()
             print(f'id_entrega: {id_entrega}')
             
             if not id_entrega:
