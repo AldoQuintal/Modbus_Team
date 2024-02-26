@@ -353,6 +353,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             query = "SELECT id FROM entregas ORDER BY ID DESC LIMIT 1"
             cur.execute(query)
             id_entrega = cur.fetchone
+            print(f'id_entrega: {id_entrega}')
             
             if not id_entrega:
                 id_cons = 0 
@@ -361,7 +362,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
                 id_cons = id_entrega[0]
             
             # Inserta la Entrega 
-            query = f"""INSERT INTO Entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_agua, vr_temp, id, x) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha_fin}', '{vol_resul}', '{vol_act[4]}', '{vol_act[5]}', {id_cons},'1')"""
+            query = f"""INSERT INTO entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_agua, vr_temp, id, x) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha_fin}', '{vol_resul}', '{vol_act[4]}', '{vol_act[5]}', {id_cons},'1')"""
             cur.execute(query)
             conn.commit()
 
