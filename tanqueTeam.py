@@ -354,10 +354,11 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             cur.execute(query)
             id_entrega = cur.fetchone
             
-            if id_entrega:
-                id_cons = id_entrega[0]
-            else:
+            if not id_entrega:
                 id_cons = 0 
+                
+            else:
+                id_cons = id_entrega[0]
             
             # Inserta la Entrega 
             query = f"""INSERT INTO Entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_agua, vr_temp, id, x) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha_fin}', '{vol_resul}', '{vol_act[4]}', '{vol_act[5]}', {id_cons},'1')"""
