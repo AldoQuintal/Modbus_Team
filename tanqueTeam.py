@@ -363,7 +363,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             #     id_cons = id_entrega[0]
             
             # Inserta la Entrega 
-            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_agua, vr_temp) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha_fin}', '{vol_resul}', '{vol_act[4]}', '{vol_act[5]}')"""
+            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha_fin}', '{vol_resul}', '1000','{vol_act[4]}', '{vol_act[5]}')"""
             cur.execute(query)
             conn.commit()
 
