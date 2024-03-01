@@ -354,11 +354,23 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             print(f'vr_agua : {vol_act[4]}')
             print(f'vr_temp : {vol_act[5]}')
 
-            
+            query="SELECT num_entregas FROM Tanques_configuration"
+            cur.execute(query)
+            num_entregas = cur.fetchone()
+            if num_entregas:
+                numEntrega = num_entregas[0]
+            else:
+                numEntrega = 20
+
+            print(f'Entegas a borrar {numEntrega}')
             # Inserta la Entrega 
             query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{vol_resul}', '{vol_resul_ct}','{vol_act[4]}', '{vol_act[5]}', True)"""
             cur.execute(query)
             conn.commit()
+            query = f"""DELETE FROM api_entregas WHERE id not in (SELECT id from api_entregas ORDER BY ID DESC Limit {numEntrega} )"""
+            cur.execute(query)
+            conn.commit()
+
 
     except IOError as error:
         print("I/O error({0}): {1}".format(error.errno, error.strerr))
