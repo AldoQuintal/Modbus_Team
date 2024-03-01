@@ -354,7 +354,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             print(f'vr_agua : {vol_act[4]}')
             print(f'vr_temp : {vol_act[5]}')
 
-            query="SELECT num_entregas FROM Tanques_configuration"
+            query='SELECT num_entregas FROM public."Tanques_configuration"'
             cur.execute(query)
             num_entregas = cur.fetchone()
             if num_entregas:
