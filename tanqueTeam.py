@@ -260,6 +260,7 @@ def _handle_input_registers(client):
 
             ### Inicia el proceso de inventarios ###
             query = f"SELECT * FROM invetarios WHERE vr_tanque = '{tank_key}'"
+            print(query)
             cur.execute(query)
             inventario = cur.fetchone()
             print(f'Invetario: {inventario}')
