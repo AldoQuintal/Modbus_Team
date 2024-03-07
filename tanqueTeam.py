@@ -258,6 +258,21 @@ def _handle_input_registers(client):
             else:
                 consecutivo = id_cons[0]
 
+            ### Inicia el proceso de inventarios ###
+            query = f"SELECT * FROM invetarios WHERE vr_tanque = '{tank_key}'"
+            cur.execute(query)
+            inventario = cur.fetchone()
+            print(f'Invetario: {inventario}')
+            if inventario:
+                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{fecha}', vr_volumen='{"{:.4f}".format(val_vol)}', vr_vol_ct = '{"{:.4f}".format(val_tc)}', vr_agua = '{val_agua}', vr_temp='{val_temp}' WHERE vr_tanque = '{tank_key}'"""
+                cur.execute(query)
+                conn.commit()
+            else:
+                query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}')"""
+                cur.execute(query)
+                conn.commit()
+
+            ### Registramos 10 puntos en la tabla para comparar ###
             query = f"""INSERT INTO monitoreo_tanques (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp, id) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}', {consecutivo + 1})"""
             cur.execute(query)
             conn.commit()
