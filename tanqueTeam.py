@@ -246,7 +246,7 @@ def _handle_input_registers(client):
             # Realiza el calculo
             val_tc = val_vol + val_vol * (coe * (15.0 - val_temp))
             now = datetime.now()
-            fecha = now.strftime("%Y%m%d%H%M")
+            fecha = now.strftime("%d/%m/%Y %H:%M:%s")
 
             print(f'val_tc ... {val_tc}')
 
@@ -265,11 +265,11 @@ def _handle_input_registers(client):
             inventario = cur.fetchone()
             print(f'Invetario: {inventario}')
             if inventario:
-                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{now}', vr_volumen='{"{:.4f}".format(val_vol)}', vr_vol_ct = '{"{:.4f}".format(val_tc)}', vr_agua = '{val_agua}', vr_temp='{val_temp}' WHERE vr_tanque = '{tank_key}'"""
+                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{fecha}', vr_volumen='{"{:.4f}".format(val_vol)}', vr_vol_ct = '{"{:.4f}".format(val_tc)}', vr_agua = '{val_agua}', vr_temp='{val_temp}' WHERE vr_tanque = '{tank_key}'"""
                 cur.execute(query)
                 conn.commit()
             else:
-                query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES('{tank_key}', '{now}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}')"""
+                query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}')"""
                 cur.execute(query)
                 conn.commit()
 
