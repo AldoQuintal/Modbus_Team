@@ -170,7 +170,7 @@ def _handle_input_registers(client):
         # tiempo_generar_cv = True
 
         # Ejecuta la consulta
-        sqlquery = "SELECT num_tanque, producto, descripcion, capacidad FROM tanques;"
+        sqlquery = "SELECT num_tanque, producto, descripcion, capacidad FROM public.'Tanques_tanques';"
         cur.execute(sqlquery)
 
         # Obtener los resultados como objeto python
@@ -321,7 +321,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
         print(f'Diferencia para ver si es descarga: {vol_dif}')
 
         #Recuperar valor base gsm_tanques con el vr tank inicia_enterga
-        query = f"""SELECT inicia_entrega FROM tanques WHERE vr_tanque = \'{vol_act[0]}\'"""
+        query = f"""SELECT inicia_entrega FROM public."Tanques_tanques" WHERE vr_tanque = \'{vol_act[0]}\'"""
         cur.execute(query)
 
         ini_entrega = cur.fetchone()
@@ -333,13 +333,13 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             now = datetime.now()
             fecha = now.strftime("%Y/%m/%d %H:%M:S")
             # Valores que vamos a usar de referencia para compararlos cuando finalize la descarga
-            query = f"""UPDATE tanques set inicia_entrega = 'True', vol_ref = \'{vol_ref}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{volumen_ct}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
+            query = f"""UPDATE public."Tanques_tanques" set inicia_entrega = 'True', vol_ref = \'{vol_ref}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{volumen_ct}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
             cur.execute(query)
             conn.commit()
             print(f'Volumen referencia para entrega: {vol_ref}, volumen CT: {volumen_ct}')
 
 
-        query = f"""SELECT inicia_entrega FROM tanques WHERE vr_tanque = \'{vol_act[0]}\'"""
+        query = f"""SELECT inicia_entrega FROM public."Tanques_tanques" WHERE vr_tanque = \'{vol_act[0]}\'"""
         cur.execute(query)
         ini_entrega = cur.fetchone()
 
@@ -348,11 +348,11 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             fin_descarga = vol_ant[2]
             print(f'Fin descarga: {fin_descarga}')
             #Cambiamos la bandera de estado para que pueda registrar nuevamente un punto de referencia.
-            query = "UPDATE tanques set inicia_entrega = 'False' WHERE vr_tanque = \'{0}\'".format(vol_act[0])
+            query = "UPDATE public.'Tanques_tanques' set inicia_entrega = 'False' WHERE vr_tanque = \'{0}\'".format(vol_act[0])
             cur.execute(query)
             conn.commit()
             #Se recuperan los datos almacenados en gsm_tanques partiendo del tanque_id
-            query = "SELECT vol_ref, fecha_ref, vol_ct_ref FROM tanques WHERE vr_tanque = \'{0}\'".format(vol_act[0])
+            query = "SELECT vol_ref, fecha_ref, vol_ct_ref, descripcion FROM public.'Tanques_tanques' WHERE vr_tanque = \'{0}\'".format(vol_act[0])
             cur.execute(query)
             val_refe = cur.fetchone()
 
@@ -363,6 +363,8 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             
             vol_resul_ct = float(volumen_ct) - float(val_refe[2])
             vol_resul = float(fin_descarga) - float(val_refe[0])
+
+            
             print("####################################### Datos a insertar en Entregas #######################################")
             print(f'vr_tanque: {vol_act[0]}')
             print(f'vr_vol_ct: {vol_resul_ct}')
