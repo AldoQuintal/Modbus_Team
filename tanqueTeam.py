@@ -348,11 +348,11 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             fin_descarga = vol_ant[2]
             print(f'Fin descarga: {fin_descarga}')
             #Cambiamos la bandera de estado para que pueda registrar nuevamente un punto de referencia.
-            query = "UPDATE public.'Tanques_tanques' set inicia_entrega = 'False' WHERE vr_tanque = \'{0}\'".format(vol_act[0])
+            query = """UPDATE public."Tanques_tanques" set inicia_entrega = 'False' WHERE vr_tanque = \'{0}\'""".format(vol_act[0])
             cur.execute(query)
             conn.commit()
             #Se recuperan los datos almacenados en gsm_tanques partiendo del tanque_id
-            query = "SELECT vol_ref, fecha_ref, vol_ct_ref, descripcion FROM public.'Tanques_tanques' WHERE vr_tanque = \'{0}\'".format(vol_act[0])
+            query = """SELECT vol_ref, fecha_ref, vol_ct_ref, descripcion FROM public."Tanques_tanques" WHERE vr_tanque = \'{0}\'""".format(vol_act[0])
             cur.execute(query)
             val_refe = cur.fetchone()
 
