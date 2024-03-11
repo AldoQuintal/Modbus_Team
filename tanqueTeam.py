@@ -246,7 +246,7 @@ def _handle_input_registers(client):
             # Realiza el calculo
             val_tc = val_vol + val_vol * (coe * (15.0 - val_temp))
             now = datetime.now()
-            fecha = now.strftime("%d/%m/%Y %H:%M:%s")
+            fecha = now.strftime("%d/%m/%Y %H:%M:%S")
 
             print(f'val_tc ... {val_tc}')
 
