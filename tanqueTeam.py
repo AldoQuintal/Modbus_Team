@@ -331,7 +331,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             print('### Empieza a registrar una entega ###')
             vol_ref = vol_ant[2]
             now = datetime.now()
-            fecha = now.strftime("%Y/%m/%d %H:%M")
+            fecha = now.strftime("%Y/%m/%d %H:%M:S")
             # Valores que vamos a usar de referencia para compararlos cuando finalize la descarga
             query = f"""UPDATE tanques set inicia_entrega = 'True', vol_ref = \'{vol_ref}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{volumen_ct}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
             cur.execute(query)
@@ -357,7 +357,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             val_refe = cur.fetchone()
 
             now = datetime.now()
-            fecha = now.strftime("%Y/%m/%d %H:%M")
+            fecha = now.strftime("%Y/%m/%d %H:%M:%S")
             
             print(f'Volumen_ct: {volumen_ct}, - volumen ct referencia: {val_refe[2]}')
             
@@ -382,7 +382,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
 
             print(f'Entegas a borrar {numEntrega}')
             # Inserta la Entrega 
-            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{vol_resul}', '{vol_resul_ct}','{vol_act[4]}', '{vol_act[5]}', True)"""
+            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.4f}".format(vol_resul)}', '{"{:.4f}".format(vol_resul_ct)}','{vol_act[4]}', '{vol_act[5]}', True)"""
             cur.execute(query)
             conn.commit()
             query = f"""DELETE FROM api_entregas WHERE id not in (SELECT id from api_entregas ORDER BY ID DESC Limit {numEntrega} )"""
