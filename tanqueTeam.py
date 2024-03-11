@@ -207,7 +207,7 @@ def _handle_input_registers(client):
 
             if len(tqs_row) > 1:
                 # x1, y1, x2, y2, x
-
+                
                 x1 = tqs_row[1][1]
                 x2 = tqs_row[0][1]
                 y1 = tqs_row[1][2]
@@ -232,7 +232,7 @@ def _handle_input_registers(client):
             if len(tqs_row) > 1:
                 print("Tanque %s, x1=%s, y1=%s x2=%s, y2=%s, x=%s " % (tank_key, x1, y1, x2, y2, x))
                 # Interpola con el siguiente valor
-                y = y1 + (((float(y2) - float(y1)) * (x - x1))/(x2 - x1))
+                y = y1 + (((y2 - y1) * (x - x1))/(x2 - x1))
                 print("Volumen Interpolado : %s" % (y))
                 # El volumen interpolado es nuestra medicion de hoy
                 val_vol = y
