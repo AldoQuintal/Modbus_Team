@@ -207,14 +207,15 @@ def _handle_input_registers(client):
 
             if len(tqs_row) > 1:
                 # x1, y1, x2, y2, x
-                x1 = tqs_row[1][0]
-                y1 = tqs_row[1][1]
-
-                x2 = tqs_row[0][0]
-                y2 = tqs_row[0][1]
+                
+                x1 = tqs_row[1][1]
+                x2 = tqs_row[0][1]
+                y1 = tqs_row[1][2]
+                y2 = tqs_row[0][2]
 
                 # Recuperamos el nivel reportado por comunicaciones
                 x = Tqs[tank_key]['nivel']
+                print(f'x ................ {x}')
 
             val_alt = Tqs[tank_key]['nivel']
             val_agua = Tqs[tank_key]['agua']
