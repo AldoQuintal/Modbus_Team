@@ -252,7 +252,7 @@ def _handle_input_registers(client):
 
             print(f'val_tc ... {val_tc}')
 
-            query = "SELECT id from monitoreo_tanques ORDER BY ID DESC LIMIT 1"
+            query = """SELECT id from public."Tanques_monitoreotanques" ORDER BY ID DESC LIMIT 1"""
             cur.execute(query)
             id_cons = cur.fetchone()
             if not id_cons:
@@ -276,11 +276,11 @@ def _handle_input_registers(client):
                 conn.commit()
 
             ### Registramos 10 puntos en la tabla para comparar ###
-            query = f"""INSERT INTO monitoreo_tanques (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp, id) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}', {consecutivo + 1})"""
+            query = f"""INSERT INTO public."Tanques_monitoreotanques" (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp, id) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}', {consecutivo + 1})"""
             cur.execute(query)
             conn.commit()
 
-            query = "DELETE FROM monitoreo_tanques WHERE id not in (SELECT id from monitoreo_tanques ORDER BY ID DESC Limit 10 )"
+            query = """DELETE FROM public."Tanques_monitoreotanques" WHERE id not in (SELECT id from public."Tanques_monitoreotanques" ORDER BY ID DESC Limit 10 )"""
             cur.execute(query)
             conn.commit()
 
@@ -301,7 +301,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
         # Abrir un cursor para realizar las operaciones a la base de datos
         cur = conn.cursor()
     
-        sqlquery = "SELECT vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp FROM monitoreo_tanques WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2" % (tank_id)
+        sqlquery = """SELECT vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp FROM public."Tanques_monitoreotanques" WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2""" % (tank_id)
         # Ejecuta la consulta
         cur.execute(sqlquery)
         # Obtener los resultados como objeto python
