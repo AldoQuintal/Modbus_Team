@@ -170,7 +170,7 @@ def _handle_input_registers(client):
         # tiempo_generar_cv = True
 
         # Ejecuta la consulta
-        sqlquery = "SELECT num_tanque, producto, descripcion, capacidad FROM public.'Tanques_tanques';"
+        sqlquery = 'SELECT num_tanque, producto, descripcion, capacidad FROM public."Tanques_tanques";'
         cur.execute(sqlquery)
 
         # Obtener los resultados como objeto python
