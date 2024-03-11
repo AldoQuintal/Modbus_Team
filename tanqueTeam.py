@@ -198,6 +198,7 @@ def _handle_input_registers(client):
             # Recupera los 2 niveles correspondiente de la tabla, para poder interpolar
             cur = conn.cursor()
             sqlquery = "(select * from %s where nivel >= %s order by nivel limit 1) union all (select * from %s where nivel < %s order by nivel desc limit 1)" % (num_tanque, Tqs[tank_key]['nivel'], num_tanque, Tqs[tank_key]['nivel'])
+            print(sqlquery)
             cur.execute(sqlquery)
             tqs_row = cur.fetchall()
             
