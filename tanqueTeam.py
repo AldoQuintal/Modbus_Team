@@ -70,15 +70,15 @@ def _handle_input_registers(client):
         ('08', dict([('inicio', 50), ('len', 6)])),
     ])
 
-    print(f' tank_matrix_ {Tank_matrix}')
+    #print(f' tank_matrix_ {Tank_matrix}')
     tankid_global = '01'
-    print(f'tank_global: {tankid_global}')
+    #print(f'tank_global: {tankid_global}')
 
     # Recupera los valores a utilizar
     inicio = Tank_matrix[tankid_global]['inicio']
-    print(f'Inicio: {inicio}')
+    #print(f'Inicio: {inicio}')
     longitud = Tank_matrix[tankid_global]['len']
-    print(f'Logitud: {longitud}')
+    #print(f'Logitud: {longitud}')
 
     # Unicamente pediremos la informacion del tanque correspondiente
     print(f"Solicitando por modbus el Tanque {tankid_global}, desde el registro {inicio}, con longitud {longitud}")
@@ -121,7 +121,7 @@ def _handle_input_registers(client):
     tanques[0][5] = rr.registers[idx+5]
 
     # Vamos a ver que informacion nos trae el equipo de monitoreo
-    print(tanques)
+    #print(tanques)
 
     # Una vez que tenemos los registros identificados hay que recuperar los valores correspondientes
     # Vamos a crear un diccionario para mayor facilidad, ajustandonos al criterio de que un registro
@@ -192,13 +192,13 @@ def _handle_input_registers(client):
             num_tanque = 't' + str(tank_id)
             tank_key = str(row[0]).zfill(2)
             
-            print(f'num_tanque : {num_tanque}')
-            print(f'Tank_key : {tank_key}')
+            #print(f'num_tanque : {num_tanque}')
+            #print(f'Tank_key : {tank_key}')
 
             # Recupera los 2 niveles correspondiente de la tabla, para poder interpolar
             cur = conn.cursor()
             sqlquery = "(select * from %s where nivel >= %s order by nivel limit 1) union all (select * from %s where nivel < %s order by nivel desc limit 1)" % (num_tanque, Tqs[tank_key]['nivel'], num_tanque, Tqs[tank_key]['nivel'])
-            print(sqlquery)
+            #print(sqlquery)
             cur.execute(sqlquery)
             tqs_row = cur.fetchall()
             
@@ -215,7 +215,7 @@ def _handle_input_registers(client):
 
                 # Recuperamos el nivel reportado por comunicaciones
                 x = Tqs[tank_key]['nivel']
-                print(f'x ................ {x}')
+                #print(f'x ................ {x}')
 
             val_alt = Tqs[tank_key]['nivel']
             val_agua = Tqs[tank_key]['agua']
@@ -223,9 +223,9 @@ def _handle_input_registers(client):
             val_vag = 0.0
             val_vol = 0.0
 
-            print(f'val_alt.. {val_alt}')
-            print(f'val_agua ... {val_agua}')
-            print(f'val_temp .. {val_temp}')
+            #print(f'val_alt.. {val_alt}')
+            #print(f'val_agua ... {val_agua}')
+            #print(f'val_temp .. {val_temp}')
 
 
             # Vamos a ver de que se trata
