@@ -419,7 +419,7 @@ def run_sync_client(client, modbus_calls=None):
 
 def ProcesaInventario():
     global glb_tanque
-    
+
     team_client = setup_sync_client()
     print("### Inicia el procesamiento de Inventarios...")
     connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
@@ -427,7 +427,7 @@ def ProcesaInventario():
     # Abrir un cursor para realizar las operaciones a la base de datos
     cur = conn.cursor()
 
-    query="""SELECT vr_tanque FROM public."Tanques_tanques" ORDER BY vr_tanque DESC"""
+    query="""SELECT vr_tanque FROM public."Tanques_tanques" ORDER BY vr_tanque ASC"""
     cur.execute(query)
     tanki = cur.fetchall()
     print(f'Tanki: {tanki}')
@@ -461,7 +461,7 @@ def setup_sync_client():
             port=puerto[0],  # serial port
             # Common optional paramers:
             framer=ModbusRtuFramer,
-            timeout=120,
+            timeout=10,
             retries=0,
                 retry_on_empty=True,
             #    close_comm_on_error=False,.
