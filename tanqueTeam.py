@@ -439,7 +439,7 @@ def setup_sync_client():
         query="""SELECT puerto FROM public."Tanques_configuration" """
         cur.execute(query)
         puerto = cur.fetchone
-
+        print(f'Puerto configurado: {puerto}')
         if not puerto:
             print("No hay puerto configurado en el Django")
 
