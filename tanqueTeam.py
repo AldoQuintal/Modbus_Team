@@ -57,249 +57,240 @@ def _handle_input_registers(client):
 
     """ 04 Read input registers."""
     _logger.info("### read input registers")
+    
 
-    connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
-    conn = psycopg2.connect(connstr)
-    cur = conn.cursor()
+    # Antes de pedir la informacion por comunicaciones debemos ver cuales son los registros requeridos
+    Tank_matrix = dict([
+        ('01', dict([('inicio', 8), ('len', 6)])), #Rergistro 1 Led 8 para sensores
+        ('02', dict([('inicio', 14), ('len', 6)])),
+        ('03', dict([('inicio', 20), ('len', 6)])),
+        ('04', dict([('inicio', 26), ('len', 6)])),
+        ('05', dict([('inicio', 32), ('len', 6)])),
+        ('06', dict([('inicio', 38), ('len', 6)])),
+        ('07', dict([('inicio', 44), ('len', 6)])),
+        ('08', dict([('inicio', 50), ('len', 6)])),
+    ])
 
-    query="""SELECT vr_tanque FROM public."Tanques_tanques" ORDER BY vr_tanque ASC"""
-    cur.execute(query)
-    tanki = cur.fetchall()
-    print(f'Tanki: {tanki}')
-    if tanki:
-        for i in tanki:
-            # Antes de pedir la informacion por comunicaciones debemos ver cuales son los registros requeridos
-            Tank_matrix = dict([
-                ('01', dict([('inicio', 8), ('len', 6)])), #Rergistro 1 Led 8 para sensores
-                ('02', dict([('inicio', 14), ('len', 6)])),
-                ('03', dict([('inicio', 20), ('len', 6)])),
-                ('04', dict([('inicio', 26), ('len', 6)])),
-                ('05', dict([('inicio', 32), ('len', 6)])),
-                ('06', dict([('inicio', 38), ('len', 6)])),
-                ('07', dict([('inicio', 44), ('len', 6)])),
-                ('08', dict([('inicio', 50), ('len', 6)])),
-            ])
+    #print(f' tank_matrix_ {Tank_matrix}')
+    tankid_global = str(glb_tanque).zfill(2)
+    #print(f'tank_global: {tankid_global}')
 
-            #print(f' tank_matrix_ {Tank_matrix}')
-            tankid_global = i[0]
-            #print(f'tank_global: {tankid_global}')
+    # Recupera los valores a utilizar
+    inicio = Tank_matrix[tankid_global]['inicio']
+    #print(f'Inicio: {inicio}')
+    longitud = Tank_matrix[tankid_global]['len']
+    #print(f'Logitud: {longitud}')
 
-            # Recupera los valores a utilizar
-            inicio = Tank_matrix[tankid_global]['inicio']
-            #print(f'Inicio: {inicio}')
-            longitud = Tank_matrix[tankid_global]['len']
-            #print(f'Logitud: {longitud}')
+    # Unicamente pediremos la informacion del tanque correspondiente
+    print(f"Solicitando por modbus el Tanque {tankid_global}, desde el registro {inicio}, con longitud {longitud}")
 
-            # Unicamente pediremos la informacion del tanque correspondiente
-            print(f"Solicitando por modbus el Tanque {tankid_global}, desde el registro {inicio}, con longitud {longitud}")
+    try:
+        rr = client.read_input_registers(inicio, longitud, slave=SLAVE)
+        print("____________________________________________________________")
+        print(rr)
+       # assert not rr.isError()
+        if rr.isError():
+            return
 
-            try:
-                rr = client.read_input_registers(inicio, longitud, slave=SLAVE)
-                print("____________________________________________________________")
-                print(rr)
-            # assert not rr.isError()
-                if rr.isError():
-                    return
+    except IOError as e:
+        print("I/O error ({0}): {1}".format(e.errno, e.strerr))
+        return
 
-            except IOError as e:
-                print("I/O error ({0}): {1}".format(e.errno, e.strerr))
-                return
+    # Una vez leido los registros vamos a interpretarlos
+    # El equipo de monitoreo soporta 8 tanques
+    # tiene 6 registros para 3 campos
+    #tanques = zeros((8, 6))
+    tanques = zeros((1, 6))
 
-            # Una vez leido los registros vamos a interpretarlos
-            # El equipo de monitoreo soporta 8 tanques
-            # tiene 6 registros para 3 campos
-            #tanques = zeros((8, 6))
-            tanques = zeros((1, 6))
+    # Vamos a recuperar la informacion de todos los tanques disponibles
+    #idx = 0
+    #for idx_tqs in range(len(tanques)):
+    #    tanques[idx_tqs][0] = rr.registers[idx]
+    #    tanques[idx_tqs][1] = rr.registers[idx+1]
+    #    tanques[idx_tqs][2] = rr.registers[idx+2]
+    #    tanques[idx_tqs][3] = rr.registers[idx+3]
+    #    tanques[idx_tqs][4] = rr.registers[idx+4]
+    #    tanques[idx_tqs][5] = rr.registers[idx+5]
+    #    idx = idx + 6
 
-            # Vamos a recuperar la informacion de todos los tanques disponibles
-            #idx = 0
-            #for idx_tqs in range(len(tanques)):
-            #    tanques[idx_tqs][0] = rr.registers[idx]
-            #    tanques[idx_tqs][1] = rr.registers[idx+1]
-            #    tanques[idx_tqs][2] = rr.registers[idx+2]
-            #    tanques[idx_tqs][3] = rr.registers[idx+3]
-            #    tanques[idx_tqs][4] = rr.registers[idx+4]
-            #    tanques[idx_tqs][5] = rr.registers[idx+5]
-            #    idx = idx + 6
+    idx = 0
+    tanques[0][0] = rr.registers[idx]
+    tanques[0][1] = rr.registers[idx+1]
+    tanques[0][2] = rr.registers[idx+2]
+    tanques[0][3] = rr.registers[idx+3]
+    tanques[0][4] = rr.registers[idx+4]
+    tanques[0][5] = rr.registers[idx+5]
 
-            idx = 0
-            tanques[0][0] = rr.registers[idx]
-            tanques[0][1] = rr.registers[idx+1]
-            tanques[0][2] = rr.registers[idx+2]
-            tanques[0][3] = rr.registers[idx+3]
-            tanques[0][4] = rr.registers[idx+4]
-            tanques[0][5] = rr.registers[idx+5]
+    # Vamos a ver que informacion nos trae el equipo de monitoreo
+    #print(tanques)
 
-            # Vamos a ver que informacion nos trae el equipo de monitoreo
-            #print(tanques)
+    # Una vez que tenemos los registros identificados hay que recuperar los valores correspondientes
+    # Vamos a crear un diccionario para mayor facilidad, ajustandonos al criterio de que un registro
+    # tiene el valor entero y el siguiente tiene el valor en milesimas de la cantidad
+    #Tqs = dict([
+    #    ('01', dict([('nivel', float(str(int(tanques[0][0])) + '.' + str(int(tanques[0][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[0][2])) + '.' + str(int(tanques[0][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[0][4])) + '.' + str(int(tanques[0][5])).zfill(3)))])),
+    #    ('02', dict([('nivel', float(str(int(tanques[1][0])) + '.' + str(int(tanques[1][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[1][2])) + '.' + str(int(tanques[1][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[1][4])) + '.' + str(int(tanques[1][5])).zfill(3)))])),
+    #    ('03', dict([('nivel', float(str(int(tanques[2][0])) + '.' + str(int(tanques[2][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[2][2])) + '.' + str(int(tanques[2][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[2][4])) + '.' + str(int(tanques[2][5])).zfill(3)))])),
+    #    ('04', dict([('nivel', float(str(int(tanques[3][0])) + '.' + str(int(tanques[3][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[3][2])) + '.' + str(int(tanques[3][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[3][4])) + '.' + str(int(tanques[3][5])).zfill(3)))])),
+    #    ('05', dict([('nivel', float(str(int(tanques[4][0])) + '.' + str(int(tanques[4][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[4][2])) + '.' + str(int(tanques[4][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[4][4])) + '.' + str(int(tanques[4][5])).zfill(3)))])),
+    #    ('06', dict([('nivel', float(str(int(tanques[5][0])) + '.' + str(int(tanques[5][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[5][2])) + '.' + str(int(tanques[5][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[5][4])) + '.' + str(int(tanques[5][5])).zfill(3)))])),
+    #    ('07', dict([('nivel', float(str(int(tanques[6][0])) + '.' + str(int(tanques[6][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[6][2])) + '.' + str(int(tanques[6][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[6][4])) + '.' + str(int(tanques[6][5])).zfill(3)))])),
+    #    ('08', dict([('nivel', float(str(int(tanques[7][0])) + '.' + str(int(tanques[7][1])).zfill(3))),
+    #                 ('agua', float(str(int(tanques[7][2])) + '.' + str(int(tanques[7][3])).zfill(3))),
+    #                 ('temp', float(str(int(tanques[7][4])) + '.' + str(int(tanques[7][5])).zfill(3)))])),
+    #])
 
-            # Una vez que tenemos los registros identificados hay que recuperar los valores correspondientes
-            # Vamos a crear un diccionario para mayor facilidad, ajustandonos al criterio de que un registro
-            # tiene el valor entero y el siguiente tiene el valor en milesimas de la cantidad
-            #Tqs = dict([
-            #    ('01', dict([('nivel', float(str(int(tanques[0][0])) + '.' + str(int(tanques[0][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[0][2])) + '.' + str(int(tanques[0][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[0][4])) + '.' + str(int(tanques[0][5])).zfill(3)))])),
-            #    ('02', dict([('nivel', float(str(int(tanques[1][0])) + '.' + str(int(tanques[1][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[1][2])) + '.' + str(int(tanques[1][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[1][4])) + '.' + str(int(tanques[1][5])).zfill(3)))])),
-            #    ('03', dict([('nivel', float(str(int(tanques[2][0])) + '.' + str(int(tanques[2][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[2][2])) + '.' + str(int(tanques[2][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[2][4])) + '.' + str(int(tanques[2][5])).zfill(3)))])),
-            #    ('04', dict([('nivel', float(str(int(tanques[3][0])) + '.' + str(int(tanques[3][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[3][2])) + '.' + str(int(tanques[3][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[3][4])) + '.' + str(int(tanques[3][5])).zfill(3)))])),
-            #    ('05', dict([('nivel', float(str(int(tanques[4][0])) + '.' + str(int(tanques[4][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[4][2])) + '.' + str(int(tanques[4][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[4][4])) + '.' + str(int(tanques[4][5])).zfill(3)))])),
-            #    ('06', dict([('nivel', float(str(int(tanques[5][0])) + '.' + str(int(tanques[5][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[5][2])) + '.' + str(int(tanques[5][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[5][4])) + '.' + str(int(tanques[5][5])).zfill(3)))])),
-            #    ('07', dict([('nivel', float(str(int(tanques[6][0])) + '.' + str(int(tanques[6][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[6][2])) + '.' + str(int(tanques[6][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[6][4])) + '.' + str(int(tanques[6][5])).zfill(3)))])),
-            #    ('08', dict([('nivel', float(str(int(tanques[7][0])) + '.' + str(int(tanques[7][1])).zfill(3))),
-            #                 ('agua', float(str(int(tanques[7][2])) + '.' + str(int(tanques[7][3])).zfill(3))),
-            #                 ('temp', float(str(int(tanques[7][4])) + '.' + str(int(tanques[7][5])).zfill(3)))])),
-            #])
+    Tqs = dict([
+        (tankid_global, dict([('nivel', float(str(int(tanques[0][0])) + '.' + str(int(tanques[0][1])).zfill(3))),
+                     ('agua', float(str(int(tanques[0][2])) + '.' + str(int(tanques[0][3])).zfill(3))),
+                     ('temp', float(str(int(tanques[0][4])) + '.' + str(int(tanques[0][5])).zfill(3)))])),
+    ])
 
-            Tqs = dict([
-                (tankid_global, dict([('nivel', float(str(int(tanques[0][0])) + '.' + str(int(tanques[0][1])).zfill(3))),
-                            ('agua', float(str(int(tanques[0][2])) + '.' + str(int(tanques[0][3])).zfill(3))),
-                            ('temp', float(str(int(tanques[0][4])) + '.' + str(int(tanques[0][5])).zfill(3)))])),
-            ])
+    print(f'Valores tanques: {Tqs}')
 
-            print(f'Valores tanques: {Tqs}')
+    try:
+        connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
+        conn = psycopg2.connect(connstr)
 
-            try:
-                connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
-                conn = psycopg2.connect(connstr)
+        cur = conn.cursor()
 
-                cur = conn.cursor()
+        # tiempo_generar_cv = True
 
-                # tiempo_generar_cv = True
+        # Ejecuta la consulta
+        sqlquery = 'SELECT num_tanque, producto, descripcion, capacidad FROM public."Tanques_tanques";'
+        cur.execute(sqlquery)
 
-                # Ejecuta la consulta
-                sqlquery = 'SELECT num_tanque, producto, descripcion, capacidad FROM public."Tanques_tanques";'
-                cur.execute(sqlquery)
+        # Obtener los resultados como objeto python
+        rows = cur.fetchall()
 
-                # Obtener los resultados como objeto python
-                rows = cur.fetchall()
+        print(f'Rows: {rows}')
 
-                print(f'Rows: {rows}')
+        # Cerrar la conexion con la base da datos
+        cur.close()
 
-                # Cerrar la conexion con la base da datos
-                cur.close()
+        for row in rows:
+            # Recupera el identificador del tanque
+            tank_id = row[0]
+            print(f'Tank_id: {tank_id}')
 
-                for row in rows:
-                    # Recupera el identificador del tanque
-                    tank_id = row[0]
-                    print(f'Tank_id: {tank_id}')
+            if str(tank_id).zfill(2) != '01':
+                continue
 
-                    if str(tank_id).zfill(2) != '01':
-                        continue
+            num_tanque = 't' + str(tank_id)
+            tank_key = str(row[0]).zfill(2)
+            
+            #print(f'num_tanque : {num_tanque}')
+            #print(f'Tank_key : {tank_key}')
 
-                    num_tanque = 't' + str(tank_id)
-                    tank_key = str(row[0]).zfill(2)
-                    
-                    #print(f'num_tanque : {num_tanque}')
-                    #print(f'Tank_key : {tank_key}')
+            # Recupera los 2 niveles correspondiente de la tabla, para poder interpolar
+            cur = conn.cursor()
+            sqlquery = "(select * from %s where nivel >= %s order by nivel limit 1) union all (select * from %s where nivel < %s order by nivel desc limit 1)" % (num_tanque, Tqs[tank_key]['nivel'], num_tanque, Tqs[tank_key]['nivel'])
+            #print(sqlquery)
+            cur.execute(sqlquery)
+            tqs_row = cur.fetchall()
+            
 
-                    # Recupera los 2 niveles correspondiente de la tabla, para poder interpolar
-                    cur = conn.cursor()
-                    sqlquery = "(select * from %s where nivel >= %s order by nivel limit 1) union all (select * from %s where nivel < %s order by nivel desc limit 1)" % (num_tanque, Tqs[tank_key]['nivel'], num_tanque, Tqs[tank_key]['nivel'])
-                    #print(sqlquery)
-                    cur.execute(sqlquery)
-                    tqs_row = cur.fetchall()
-                    
+            print(f'tqs_row: {tqs_row}')
 
-                    print(f'tqs_row: {tqs_row}')
+            if len(tqs_row) > 1:
+                # x1, y1, x2, y2, x
+                
+                x1 = tqs_row[1][1]
+                x2 = tqs_row[0][1]
+                y1 = tqs_row[1][2]
+                y2 = tqs_row[0][2]
 
-                    if len(tqs_row) > 1:
-                        # x1, y1, x2, y2, x
-                        
-                        x1 = tqs_row[1][1]
-                        x2 = tqs_row[0][1]
-                        y1 = tqs_row[1][2]
-                        y2 = tqs_row[0][2]
+                # Recuperamos el nivel reportado por comunicaciones
+                x = Tqs[tank_key]['nivel']
+                #print(f'x ................ {x}')
 
-                        # Recuperamos el nivel reportado por comunicaciones
-                        x = Tqs[tank_key]['nivel']
-                        #print(f'x ................ {x}')
+            val_alt = Tqs[tank_key]['nivel']
+            val_agua = Tqs[tank_key]['agua']
+            val_temp = Tqs[tank_key]['temp']
+            val_vag = 0.0
+            val_vol = 0.0
 
-                    val_alt = Tqs[tank_key]['nivel']
-                    val_agua = Tqs[tank_key]['agua']
-                    val_temp = Tqs[tank_key]['temp']
-                    val_vag = 0.0
-                    val_vol = 0.0
-
-                    #print(f'val_alt.. {val_alt}')
-                    #print(f'val_agua ... {val_agua}')
-                    #print(f'val_temp .. {val_temp}')
+            #print(f'val_alt.. {val_alt}')
+            #print(f'val_agua ... {val_agua}')
+            #print(f'val_temp .. {val_temp}')
 
 
-                    # Vamos a ver de que se trata
-                    if len(tqs_row) > 1:
-                        print("Tanque %s, x1=%s, y1=%s x2=%s, y2=%s, x=%s " % (tank_key, x1, y1, x2, y2, x))
-                        # Interpola con el siguiente valor
-                        y = y1 + (((y2 - y1) * (x - x1))/(x2 - x1))
-                        print("Volumen Interpolado : %s" % (y))
-                        # El volumen interpolado es nuestra medicion de hoy
-                        val_vol = y
+            # Vamos a ver de que se trata
+            if len(tqs_row) > 1:
+                print("Tanque %s, x1=%s, y1=%s x2=%s, y2=%s, x=%s " % (tank_key, x1, y1, x2, y2, x))
+                # Interpola con el siguiente valor
+                y = y1 + (((y2 - y1) * (x - x1))/(x2 - x1))
+                print("Volumen Interpolado : %s" % (y))
+                # El volumen interpolado es nuestra medicion de hoy
+                val_vol = y
 
-                    # Los coeficientes de expansion considerados son:
-                    # Gasolina - 0.00123
-                    # Diesel - 0.00083
-                    if row[1] == 'DIESEL':
-                        coe = 0.00083
-                    else:
-                        coe = 0.00123
+            # Los coeficientes de expansion considerados son:
+            # Gasolina - 0.00123
+            # Diesel - 0.00083
+            if row[1] == 'DIESEL':
+                coe = 0.00083
+            else:
+                coe = 0.00123
 
-                    # Realiza el calculo
-                    val_tc = val_vol + val_vol * (coe * (15.0 - val_temp))
-                    now = datetime.now()
-                    fecha = now.strftime("%d/%m/%Y %H:%M:%S")
+            # Realiza el calculo
+            val_tc = val_vol + val_vol * (coe * (15.0 - val_temp))
+            now = datetime.now()
+            fecha = now.strftime("%d/%m/%Y %H:%M:%S")
 
-                    print(f'val_tc ... {val_tc}')
+            print(f'val_tc ... {val_tc}')
 
-                    query = """SELECT id from public."Tanques_monitoreotanques" ORDER BY ID DESC LIMIT 1"""
-                    cur.execute(query)
-                    id_cons = cur.fetchone()
-                    if not id_cons:
-                        consecutivo = 0
-                    else:
-                        consecutivo = id_cons[0]
+            query = """SELECT id from public."Tanques_monitoreotanques" ORDER BY ID DESC LIMIT 1"""
+            cur.execute(query)
+            id_cons = cur.fetchone()
+            if not id_cons:
+                consecutivo = 0
+            else:
+                consecutivo = id_cons[0]
 
-                    ### Inicia el proceso de inventarios ###
-                    query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
-                    print(query)
-                    cur.execute(query)
-                    inventario = cur.fetchone()
-                    print(f'Invetario: {inventario}')
-                    if inventario:
-                        query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{fecha}', vr_volumen='{"{:.4f}".format(val_vol)}', vr_vol_ct = '{"{:.4f}".format(val_tc)}', vr_agua = '{val_agua}', vr_temp='{val_temp}' WHERE vr_tanque = '{tank_key}'"""
-                        cur.execute(query)
-                        conn.commit()
-                    else:
-                        query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}')"""
-                        cur.execute(query)
-                        conn.commit()
+            ### Inicia el proceso de inventarios ###
+            query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
+            print(query)
+            cur.execute(query)
+            inventario = cur.fetchone()
+            print(f'Invetario: {inventario}')
+            if inventario:
+                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{fecha}', vr_volumen='{"{:.4f}".format(val_vol)}', vr_vol_ct = '{"{:.4f}".format(val_tc)}', vr_agua = '{val_agua}', vr_temp='{val_temp}' WHERE vr_tanque = '{tank_key}'"""
+                cur.execute(query)
+                conn.commit()
+            else:
+                query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}')"""
+                cur.execute(query)
+                conn.commit()
 
-                    ### Registramos 10 puntos en la tabla para comparar ###
-                    query = f"""INSERT INTO public."Tanques_monitoreotanques" (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp, id) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}', {consecutivo + 1})"""
-                    cur.execute(query)
-                    conn.commit()
+            ### Registramos 10 puntos en la tabla para comparar ###
+            query = f"""INSERT INTO public."Tanques_monitoreotanques" (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp, id) VALUES('{tank_key}', '{fecha}', '{"{:.4f}".format(val_vol)}', '{"{:.4f}".format(val_tc)}', '{val_agua}', '{val_temp}', {consecutivo + 1})"""
+            cur.execute(query)
+            conn.commit()
 
-                    query = """DELETE FROM public."Tanques_monitoreotanques" WHERE id not in (SELECT id from public."Tanques_monitoreotanques" ORDER BY ID DESC Limit 10 )"""
-                    cur.execute(query)
-                    conn.commit()
+            query = """DELETE FROM public."Tanques_monitoreotanques" WHERE id not in (SELECT id from public."Tanques_monitoreotanques" ORDER BY ID DESC Limit 10 )"""
+            cur.execute(query)
+            conn.commit()
 
-                    cur.close()
-                    # Manda llamar al calculo de entregas
-                    procesa_entregas(tank_id=tank_key, volumen=val_vol, volumen_ct=val_tc, temperatura=val_temp)
+            cur.close()
+            # Manda llamar al calculo de entregas
+            procesa_entregas(tank_id=tank_key, volumen=val_vol, volumen_ct=val_tc, temperatura=val_temp)
 
-            except IOError as e:
-                print("I/O error({0}): {1}".format(e.errno, e.strerr))
+    except IOError as e:
+        print("I/O error({0}): {1}".format(e.errno, e.strerr))
 
 
 def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
@@ -429,10 +420,21 @@ def ProcesaInventario():
 
     team_client = setup_sync_client()
     print("### Inicia el procesamiento de Inventarios...")
-    
-    
-    # Hace la consulta para solicitar la informacion tanque por tanque
-    run_sync_client(team_client, modbus_calls=read_input_registers_call)
+    connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
+    conn = psycopg2.connect(connstr)
+    # Abrir un cursor para realizar las operaciones a la base de datos
+    cur = conn.cursor()
+
+    query="""SELECT vr_tanque FROM public."Tanques_tanques" ORDER BY vr_tanque DESC"""
+    cur.execute(query)
+    tanki = cur.fetchall()
+    print(f'Tanki: {tanki}')
+    if tanki:
+        for i in tanki:
+            glb_tanque = i[0]
+
+            # Hace la consulta para solicitar la informacion tanque por tanque
+            run_sync_client(team_client, modbus_calls=read_input_registers_call)
     
 
 
@@ -457,7 +459,7 @@ def setup_sync_client():
             port=puerto[0],  # serial port
             # Common optional paramers:
             framer=ModbusRtuFramer,
-            timeout=10,
+            timeout=120,
             retries=0,
                 retry_on_empty=True,
             #    close_comm_on_error=False,.
