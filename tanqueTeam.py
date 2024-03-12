@@ -444,7 +444,7 @@ def setup_sync_client():
             print("No hay puerto configurado en el Django")
 
         client = ModbusSerialClient(
-            port=puerto,  # serial port
+            port=puerto[0],  # serial port
             # Common optional paramers:
             framer=ModbusRtuFramer,
             timeout=120,
