@@ -418,7 +418,8 @@ def run_sync_client(client, modbus_calls=None):
     client.close()
 
 def ProcesaInventario():
-
+    global glb_tanque
+    
     team_client = setup_sync_client()
     print("### Inicia el procesamiento de Inventarios...")
     connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
