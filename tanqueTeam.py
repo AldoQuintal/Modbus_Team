@@ -74,6 +74,7 @@ def _handle_input_registers(client):
     #print(f' tank_matrix_ {Tank_matrix}')
     tankid_global = str(glb_tanque).zfill(2)
     #print(f'tank_global: {tankid_global}')
+    print(f'tankid_global: {tankid_global}')
 
     # Recupera los valores a utilizar
     inicio = Tank_matrix[tankid_global]['inicio']
