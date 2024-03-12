@@ -62,7 +62,7 @@ def _handle_input_registers(client):
     conn = psycopg2.connect(connstr)
     cur = conn.cursor()
 
-    query="""SELECT vr_tanque FROM public."Tanques_tanques" """
+    query="""SELECT vr_tanque FROM public."Tanques_tanques" ORDER BY vr_tanque DESC"""
     cur.execute(query)
     tanki = cur.fetchall()
     print(f'Tanki: {tanki}')
