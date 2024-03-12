@@ -371,7 +371,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
                 coe = 0.00123
 
             # Realiza el calculo
-            val_tc = vol_resul + vol_resul * (coe * (15.0 - vol_act[5]))
+            val_tc = vol_resul + vol_resul * (coe * (15.0 - float(vol_act[5])))
             
             print("####################################### Datos a insertar en Entregas #######################################")
             print(f'vr_tanque: {vol_act[0]}')
