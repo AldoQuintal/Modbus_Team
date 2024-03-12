@@ -457,7 +457,7 @@ def setup_sync_client():
             port=puerto[0],  # serial port
             # Common optional paramers:
             framer=ModbusRtuFramer,
-            timeout=120,
+            timeout=10,
             retries=0,
                 retry_on_empty=True,
             #    close_comm_on_error=False,.
