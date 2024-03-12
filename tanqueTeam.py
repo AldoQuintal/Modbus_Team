@@ -398,6 +398,8 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             query = f"""DELETE FROM api_entregas WHERE id not in (SELECT id from api_entregas ORDER BY ID DESC Limit {numEntrega} )"""
             cur.execute(query)
             conn.commit()
+        
+        conn.close()
 
 
     except IOError as error:
@@ -428,23 +430,40 @@ def setup_sync_client():
     """Run client setup."""
     print("### Create client object")
 
-    client = ModbusSerialClient(
-        port='/dev/ttyUSB0',  # serial port
-        # Common optional paramers:
-        framer=ModbusRtuFramer,
-        timeout=120,
-        retries=0,
-            retry_on_empty=True,
-        #    close_comm_on_error=False,.
-        strict=True,
-        # Serial setup parameters
-        baudrate=19200,
-        bytesize=8,
-        parity="N",
-        stopbits=1,
-        #    handle_local_echo=False,
-    )
-    return client
+    try:
+
+        connstr = "host=%s port=%s user=%s password=%s dbname=%s" % (PSQL_HOST, PSQL_PORT, PSQL_USER, PSQL_PASS, PSQL_DB)
+        conn = psycopg2.connect(connstr)
+
+        cur = conn.cursor()
+        query="""SELECT puerto FROM public."Tanques_configuration" """
+        cur.execute(query)
+        puerto = cur.fetchone
+
+        if not puerto:
+            print("No hay puerto configurado en el Django")
+
+        client = ModbusSerialClient(
+            port=puerto,  # serial port
+            # Common optional paramers:
+            framer=ModbusRtuFramer,
+            timeout=120,
+            retries=0,
+                retry_on_empty=True,
+            #    close_comm_on_error=False,.
+            strict=True,
+            # Serial setup parameters
+            baudrate=19200,
+            bytesize=8,
+            parity="N",
+            stopbits=1,
+            #    handle_local_echo=False,
+        )
+        return client
+    
+    except IOError as error:
+        print("I/O error({0}): {1}".format(error.errno, error.strerr))
+        return
     
 def read_input_registers_call(client):
     """Demonstrate basic read/write calls."""
