@@ -431,6 +431,7 @@ def ProcesaInventario():
     cur.execute(query)
     tanki = cur.fetchall()
     print(f'Tanki: {tanki}')
+    
     if tanki:
         for i in tanki:
             glb_tanque = i[0]
@@ -438,6 +439,7 @@ def ProcesaInventario():
             # Hace la consulta para solicitar la informacion tanque por tanque
             run_sync_client(team_client, modbus_calls=read_input_registers_call)
     
+    conn.close()
 
 
 def setup_sync_client():
@@ -473,6 +475,7 @@ def setup_sync_client():
             stopbits=1,
             #    handle_local_echo=False,
         )
+        conn.close()
         return client
     
     except IOError as error:
