@@ -188,7 +188,7 @@ def _handle_input_registers(client):
             tank_id = row[0]
             print(f'Tank_id: {tank_id}')
 
-            if str(tank_id).zfill(2) != '01':
+            if str(tank_id).zfill(2) != tankid_global:
                 continue
 
             num_tanque = 't' + str(tank_id)
