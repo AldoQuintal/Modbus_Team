@@ -186,7 +186,7 @@ def _handle_input_registers(client):
         for row in rows:
             # Recupera el identificador del tanque
             tank_id = row[0]
-            print(f'Tank_id: {tank_id}')
+            #print(f'Tank_id: {tank_id}')
 
             if str(tank_id).zfill(2) != tankid_global:
                 continue
@@ -205,7 +205,7 @@ def _handle_input_registers(client):
             tqs_row = cur.fetchall()
             
 
-            print(f'tqs_row: {tqs_row}')
+            #print(f'tqs_row: {tqs_row}')
 
             if len(tqs_row) > 1:
                 # x1, y1, x2, y2, x
@@ -264,7 +264,7 @@ def _handle_input_registers(client):
 
             ### Inicia el proceso de inventarios ###
             query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
-            print(query)
+            #print(query)
             cur.execute(query)
             inventario = cur.fetchone()
             print(f'Invetario: {inventario}')
@@ -315,8 +315,8 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
         vol_act = rows[0]
         vol_ant = rows[-1]
         
-        print(f'volumen anterior: {vol_ant}')
-        print(f'volumen actual: {vol_act}')
+        #print(f'volumen anterior: {vol_ant}')
+        #print(f'volumen actual: {vol_act}')
 
         #Se realiza la diferencia entre los dos ultimos registros para detectar un aumento
         vol_dif = float(vol_act[2]) - float(vol_ant[2])
@@ -327,7 +327,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
         cur.execute(query)
 
         ini_entrega = cur.fetchone()
-        print(f'Ini_entrega{ini_entrega[0]}')
+        print(f'Inicia Entrega: {ini_entrega[0]}')
 
         if vol_dif > 50 and ini_entrega[0] == 'False':
             print('### Empieza a registrar una entega ###')
@@ -338,7 +338,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             query = f"""UPDATE public."Tanques_tanques" set inicia_entrega = 'True', vol_ref = \'{vol_ref}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{volumen_ct}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
             cur.execute(query)
             conn.commit()
-            print(f'Volumen referencia para entrega: {vol_ref}, volumen CT: {volumen_ct}')
+            print(f'Volumen referencia para entrega: {vol_ref}')
 
 
         query = f"""SELECT inicia_entrega FROM public."Tanques_tanques" WHERE vr_tanque = \'{vol_act[0]}\'"""
@@ -361,7 +361,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             now = datetime.now()
             fecha = now.strftime("%Y/%m/%d %H:%M:%S")
             
-            print(f'Volumen_ct: {volumen_ct}, - volumen ct referencia: {val_refe[2]}')
+            #print(f'Volumen_ct: {volumen_ct}, - volumen ct referencia: {val_refe[2]}')
             
             vol_resul_ct = float(volumen_ct) - float(val_refe[2])
             vol_resul = float(fin_descarga) - float(val_refe[0])
