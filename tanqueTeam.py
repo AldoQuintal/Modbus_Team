@@ -41,11 +41,9 @@ PSQL_DB   = "Monitoreo_team"
 glb_tanque = '00'
 
 def FSM_Core():
-    while( True ):
-
-        
-        ProcesaInventario()
-        print("Esperando 30 seg para consultar sensores")
+    
+    ProcesaInventario()
+    print("Esperando 30 seg para consultar sensores")
 
 
 def _handle_input_registers(client):
