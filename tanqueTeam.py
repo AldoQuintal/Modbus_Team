@@ -394,7 +394,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
 
             print(f'Entegas a borrar {numEntrega}')
             # Inserta la Entrega 
-            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.2f}".format(vol_resul)}', '{"{:.2f}".format(val_tc)}','{"{:.2f}".format(vol_act[4])}', '{"{:.2f}".format(vol_act[5])}', True)"""
+            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.2f}".format(vol_resul)}', '{"{:.2f}".format(val_tc)}','{"{:.2f}".format(float(vol_act[4]))}', '{"{:.2f}".format(float(vol_act[5]))}', True)"""
             cur.execute(query)
             conn.commit()
             query = f"""DELETE FROM api_entregas WHERE id not in (SELECT id from api_entregas ORDER BY ID DESC Limit {numEntrega} )"""
