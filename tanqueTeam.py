@@ -43,7 +43,7 @@ glb_tanque = '00'
 def FSM_Core():
     
     ProcesaInventario()
-    print("Esperando 30 seg para consultar sensores")
+    
 
 
 def _handle_input_registers(client):
