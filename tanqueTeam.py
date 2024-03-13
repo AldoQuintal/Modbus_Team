@@ -335,7 +335,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             now = datetime.now()
             fecha = now.strftime("%Y/%m/%d %H:%M:%S")
             # Valores que vamos a usar de referencia para compararlos cuando finalize la descarga
-            query = f"""UPDATE public."Tanques_tanques" set inicia_entrega = 'True', vol_ref = \'{"{:.2f}".format(vol_ref)}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{"{:.2f}".format(volumen_ct)}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
+            query = f"""UPDATE public."Tanques_tanques" set inicia_entrega = 'True', vol_ref = \'{"{:.2f}".format(float(vol_ref))}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{"{:.2f}".format(volumen_ct)}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
             cur.execute(query)
             conn.commit()
             print(f'Volumen referencia para entrega: {vol_ref}')
