@@ -47,9 +47,6 @@ def FSM_Core():
         ProcesaInventario()
         print("Esperando 30 seg para consultar sensores")
 
-        time.sleep(30)
-
-
 
 def _handle_input_registers(client):
     global glb_tanque
