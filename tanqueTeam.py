@@ -45,7 +45,7 @@ def FSM_Core():
 
     while True:
         ProcesaInventario()
-    
+        time.sleep(10)
 
 
 def _handle_input_registers(client):
