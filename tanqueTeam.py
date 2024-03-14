@@ -352,7 +352,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             cur.execute(query)
             conn.commit()
             #Se recuperan los datos almacenados en gsm_tanques partiendo del tanque_id
-            query = """SELECT vol_ref, fecha_ref, vol_ct_ref, descripcion FROM public."Tanques_tanques" WHERE vr_tanque = \'{0}\'""".format(vol_act[0])
+            query = """SELECT vol_ref, fecha_ref, vol_ct_ref, descripcion, agua_ini, temp_ini, vol_ini FROM public."Tanques_tanques" WHERE vr_tanque = \'{0}\'""".format(vol_act[0])
             cur.execute(query)
             val_refe = cur.fetchone()
 
@@ -392,7 +392,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
 
             print(f'Entegas a borrar {numEntrega}')
             # Inserta la Entrega 
-            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.2f}".format(vol_resul)}', '{"{:.2f}".format(val_tc)}','{"{:.2f}".format(float(vol_act[4]))}', '{"{:.2f}".format(float(vol_act[5]))}', True)"""
+            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active, agua_ini, temp_ini, vol_ini) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.2f}".format(vol_resul)}', '{"{:.2f}".format(val_tc)}','{"{:.2f}".format(float(vol_act[4]))}', '{"{:.2f}".format(float(vol_act[5]))}', True, '{val_refe[4]}','{val_refe[5]}', '{val_refe[6]}' )"""
             cur.execute(query)
             conn.commit()
             query = f"""DELETE FROM api_entregas WHERE id not in (SELECT id from api_entregas ORDER BY ID DESC Limit {numEntrega} )"""
