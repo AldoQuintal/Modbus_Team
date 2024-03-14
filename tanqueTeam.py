@@ -333,10 +333,11 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             now = datetime.now()
             fecha = now.strftime("%Y/%m/%d %H:%M:%S")
             # Valores que vamos a usar de referencia para compararlos cuando finalize la descarga
-            query = f"""UPDATE public."Tanques_tanques" set inicia_entrega = 'True', vol_ref = \'{"{:.2f}".format(float(vol_ref))}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{"{:.2f}".format(volumen_ct)}\', agua_ini = \'{"{:.2f}".format(float(vol_ant[4]))}\', temp_ini = \'{"{:.2f}".format(float(vol_ant[5]))}\', vol_ini = \'{"{:.2f}".format(float(volumen))}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
+            query = f"""UPDATE public."Tanques_tanques" set inicia_entrega = 'True', vol_ref = \'{"{:.2f}".format(float(vol_ref))}\', fecha_ref = \'{fecha}\', vol_ct_ref = \'{"{:.2f}".format(vol_ant[3])}\', agua_ini = \'{"{:.2f}".format(float(vol_ant[4]))}\', temp_ini = \'{"{:.2f}".format(float(vol_ant[5]))}\', vol_ini = \'{"{:.2f}".format(float(volumen))}\' WHERE vr_tanque = \'{vol_act[0]}\'"""
             cur.execute(query)
             conn.commit()
             print(f'Volumen referencia para entrega: {vol_ref}')
+            print(f'Volumen ct referencia para entrega: {volumen_ct}')
 
 
         query = f"""SELECT inicia_entrega FROM public."Tanques_tanques" WHERE vr_tanque = \'{vol_act[0]}\'"""
@@ -362,7 +363,6 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             
             #print(f'Volumen_ct: {volumen_ct}, - volumen ct referencia: {val_refe[2]}')
             
-            vol_resul_ct = float(volumen_ct) - float(val_refe[2])
             vol_resul = float(fin_descarga) - float(val_refe[0])
             
 
@@ -403,7 +403,8 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             print(f'Entegas a borrar {numEntrega}')
             print(f'Volumen Actual: {vol_act}')
             # Inserta la Entrega 
-            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active, agua_ini, temp_ini, vol_ini, agua_fin, temp_fin, clv_prd, vol_ct_ini, vol_ct_fin, vol_fin) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.2f}".format(vol_resul)}', '{"{:.2f}".format(val_tc)}','{"{:.2f}".format(float(vol_act[4]))}', '{"{:.2f}".format(float(vol_act[5]))}', True, '{val_refe[4]}','{val_refe[5]}', '{val_refe[6]}', '{"{:.2f}".format(float(vol_act[4]))}', '{"{:.2f}".format(float(vol_act[5]))}', '{clv_prd[0]}', '{val_refe[2]}', '{vol_act[3]}', '{vol_act[2]}' )"""
+            query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vol_ini, vol_fin, vol_ct_ini, vol_ct_fin, agua_ini, agua_fin, temp_ini, temp_fin, aum_neto, aum_bruto, clv_prd) 
+            VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{val_refe[0]}', '{vol_act[2]}', '{val_refe[2]}', '{vol_act[3]}', '{val_refe[4]}', '{vol_act[4]}', '{val_refe[5]}', '{vol_act[5]}', '{vol_resul}', '{val_tc}', '{clv_prd[0]}') """
             print(query)
             cur.execute(query)
             conn.commit()
