@@ -391,6 +391,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
                 numEntrega = 20
 
             print(f'Entegas a borrar {numEntrega}')
+            print(f'Volumen Actual: {vol_act}')
             # Inserta la Entrega 
             query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vr_volumen, vr_vol_ct, vr_agua, vr_temp, is_active, agua_ini, temp_ini, vol_ini) VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{"{:.2f}".format(vol_resul)}', '{"{:.2f}".format(val_tc)}','{"{:.2f}".format(float(vol_act[4]))}', '{"{:.2f}".format(float(vol_act[5]))}', True, '{val_refe[4]}','{val_refe[5]}', '{val_refe[6]}' )"""
             cur.execute(query)
