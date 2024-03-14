@@ -355,6 +355,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             query = """SELECT vol_ref, fecha_ref, vol_ct_ref, descripcion, agua_ini, temp_ini, vol_ini FROM public."Tanques_tanques" WHERE vr_tanque = \'{0}\'""".format(vol_act[0])
             cur.execute(query)
             val_refe = cur.fetchone()
+            print(f'valores de referencia: {val_refe}')
 
             now = datetime.now()
             fecha = now.strftime("%Y/%m/%d %H:%M:%S")
