@@ -404,7 +404,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
             print(f'Volumen Actual: {vol_act}')
             # Inserta la Entrega 
             query = f"""INSERT INTO api_entregas (vr_tanque, fecha_ini, fecha_fin, vol_ini, vol_fin, vol_ct_ini, vol_ct_fin, agua_ini, agua_fin, temp_ini, temp_fin, aum_neto, aum_bruto, clv_prd) 
-            VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{val_refe[0]}', '{vol_act[2]}', '{val_refe[2]}', '{vol_act[3]}', '{val_refe[4]}', '{"{:.2f}".format(float(vol_act[4]))}', '{val_refe[5]}', '{"{:.2f}".format(float(vol_act[5]))}', '{"{:.2f}".format(float(vol_resul))}', '{val_tc}', '{clv_prd[0]}') """
+            VALUES ('{vol_act[0]}', '{val_refe[1]}', '{fecha}', '{val_refe[0]}', '{vol_act[2]}', '{val_refe[2]}', '{vol_act[3]}', '{val_refe[4]}', '{"{:.2f}".format(float(vol_act[4]))}', '{val_refe[5]}', '{"{:.2f}".format(float(vol_act[5]))}', '{"{:.2f}".format(float(vol_resul))}', '{"{:.2f}".format(float(val_tc))}', '{clv_prd[0]}') """
             print(query)
             cur.execute(query)
             conn.commit()
