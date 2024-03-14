@@ -391,7 +391,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
                 numEntrega = 20
 
             # Ejecuta la consulta
-            sqlquery = f"""SELECT descripcion FROM public."Tanques_tanques" WHERE vr_tanque = {vol_act[0]};"""
+            sqlquery = f"""SELECT descripcion FROM public."Tanques_tanques" WHERE vr_tanque = '{vol_act[0]}';"""
             cur.execute(sqlquery)
 
             # Obtener los resultados como objeto python
