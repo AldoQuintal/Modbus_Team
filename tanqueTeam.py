@@ -42,10 +42,9 @@ glb_tanque = '00'
 
 def FSM_Core():
     
-
-    while True:
-        ProcesaInventario()
-        time.sleep(10)
+    #while True:
+    ProcesaInventario()
+        
 
 
 def _handle_input_registers(client):
