@@ -265,7 +265,9 @@ def _handle_input_registers(client):
             print(sqlquery)
             cur.execute(sqlquery)
             vol_anterior= cur.fetchall()
-            print(f'vol_anterior....... {vol_anterior[1][0]}')
+            if vol_anterior:
+                vol_ante = vol_anterior[1][0]
+                print(f'vol_anterior....... {vol_anterior[1][0]}')
             
             ### Inicia el proceso de inventarios ###
             query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
@@ -274,7 +276,7 @@ def _handle_input_registers(client):
             inventario = cur.fetchone()
             print(f'Invetario: {inventario}')
             if inventario:
-                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{fecha}', vr_volumen='{"{:.2f}".format(val_vol)}', vr_vol_ct = '{"{:.2f}".format(val_tc)}', vr_agua = '{"{:.2f}".format(val_agua)}', vr_temp='{"{:.2f}".format(val_temp)}' WHERE vr_tanque = '{tank_key}'"""
+                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vol_ant = '{vol_ante}', vr_fecha='{fecha}', vr_volumen='{"{:.2f}".format(val_vol)}', vr_vol_ct = '{"{:.2f}".format(val_tc)}', vr_agua = '{"{:.2f}".format(val_agua)}', vr_temp='{"{:.2f}".format(val_temp)}' WHERE vr_tanque = '{tank_key}'"""
                 cur.execute(query)
                 conn.commit()
             else:
