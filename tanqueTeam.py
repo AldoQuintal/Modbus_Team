@@ -264,7 +264,7 @@ def _handle_input_registers(client):
             sqlquery = """SELECT vr_volumen FROM public."Tanques_monitoreotanques" WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2""" % ('0' +str(tank_id))
             print(sqlquery)
             cur.execute(sqlquery)
-            vol_anterior= cur.fetchone()
+            vol_anterior= cur.fetchall()
             print(f'vol_anterior....... {vol_anterior}')
             
             ### Inicia el proceso de inventarios ###
