@@ -265,7 +265,7 @@ def _handle_input_registers(client):
             print(sqlquery)
             cur.execute(sqlquery)
             vol_anterior= cur.fetchall()
-            print(f'vol_anterior....... {vol_anterior[1]}')
+            print(f'vol_anterior....... {vol_anterior[1][0]}')
             
             ### Inicia el proceso de inventarios ###
             query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
