@@ -167,6 +167,9 @@ def _handle_input_registers(client):
         cur = conn.cursor()
 
         # tiempo_generar_cv = True
+        print(f'........ {tank_id}')
+        sqlquery = """SELECT vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp FROM public."Tanques_monitoreotanques" WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2""" % (tank_id)
+
 
         # Ejecuta la consulta
         sqlquery = 'SELECT num_tanque, producto, descripcion, capacidad, vol_ref FROM public."Tanques_tanques";'
