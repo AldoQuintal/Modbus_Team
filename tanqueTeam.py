@@ -261,9 +261,10 @@ def _handle_input_registers(client):
             
             
             print(f'tank_id ..... {tank_id}')
-            sqlquery = """SELECT vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp FROM public."Tanques_monitoreotanques" WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2""" % (tank_id)
-
-
+            sqlquery = """SELECT vr_volumen FROM public."Tanques_monitoreotanques" WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2""" % (tank_id)
+            cur.execute(sqlquery)
+            vol_anterior= cur.fetchone()
+            
             ### Inicia el proceso de inventarios ###
             query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
             #print(query)
@@ -271,7 +272,7 @@ def _handle_input_registers(client):
             inventario = cur.fetchone()
             print(f'Invetario: {inventario}')
             if inventario:
-                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vr_fecha='{fecha}', vr_volumen='{"{:.2f}".format(val_vol)}', vr_vol_ct = '{"{:.2f}".format(val_tc)}', vr_agua = '{"{:.2f}".format(val_agua)}', vr_temp='{"{:.2f}".format(val_temp)}' WHERE vr_tanque = '{tank_key}'"""
+                query = f"""UPDATE inventarios SET vr_tanque = '{tank_key}', vol_ant = '{vol_anterior}', vr_fecha='{fecha}', vr_volumen='{"{:.2f}".format(val_vol)}', vr_vol_ct = '{"{:.2f}".format(val_tc)}', vr_agua = '{"{:.2f}".format(val_agua)}', vr_temp='{"{:.2f}".format(val_temp)}' WHERE vr_tanque = '{tank_key}'"""
                 cur.execute(query)
                 conn.commit()
             else:
