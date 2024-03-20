@@ -262,6 +262,7 @@ def _handle_input_registers(client):
             
             print(f'tank_id ..... {tank_id}')
             sqlquery = """SELECT vr_volumen FROM public."Tanques_monitoreotanques" WHERE vr_tanque = '%s' ORDER BY id DESC LIMIT 2""" % (tank_id)
+            print(sqlquery)
             cur.execute(sqlquery)
             vol_anterior= cur.fetchone()
             print(f'vol_anterior....... {vol_anterior}')
