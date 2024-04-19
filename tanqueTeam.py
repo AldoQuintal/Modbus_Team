@@ -269,6 +269,8 @@ def _handle_input_registers(client):
                 vol_ante = vol_anterior[1][0]
                 print(f'vol_anterior....... {vol_anterior[1][0]}')
             
+            else:
+                vol_ante = 0
             ### Inicia el proceso de inventarios ###
             print(f'vol_ante ***** {vol_ante}')
             query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
