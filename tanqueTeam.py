@@ -432,6 +432,7 @@ def procesa_entregas(tank_id, volumen, volumen_ct, temperatura):
 def run_sync_client(client, modbus_calls=None):
     """Run sync client."""
     print("### Client starting")
+    print(f'cliente: {client}')
     client.connect()
     if modbus_calls:
         modbus_calls(client)
