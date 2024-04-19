@@ -266,9 +266,12 @@ def _handle_input_registers(client):
             vol_anterior= cur.fetchall()
             
             if vol_anterior:
-                vol_ante = vol_anterior[1][0]
-                print(f'vol_anterior....... {vol_anterior[1][0]}')
-            
+                try:
+                    vol_ante = vol_anterior[1][0]
+                    print(f'vol_anterior....... {vol_anterior[1][0]}')
+                except:
+                    print(f'vol_anterior -------- {vol_anterior}')
+                    vol_ante = vol_anterior[0]
             else:
                 vol_ante = 0
             ### Inicia el proceso de inventarios ###
