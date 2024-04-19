@@ -496,6 +496,7 @@ def setup_sync_client():
             stopbits=1,
             #    handle_local_echo=False,
         )
+        print(f'Cliente setup: {client}')
         conn.close()
         return client
     
