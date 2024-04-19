@@ -264,13 +264,10 @@ def _handle_input_registers(client):
             print(sqlquery)
             cur.execute(sqlquery)
             vol_anterior= cur.fetchall()
-            try:
-                if vol_anterior:
-                    vol_ante = vol_anterior[1][0]
-                    print(f'vol_anterior....... {vol_anterior[1][0]}')
-            except:
-                vol_ante = vol_anterior[0]
-                print(f'vol_ante except: {vol_ante}')
+            
+            if vol_anterior:
+                vol_ante = vol_anterior[1][0]
+                print(f'vol_anterior....... {vol_anterior[1][0]}')
             
             ### Inicia el proceso de inventarios ###
             query = f"SELECT * FROM inventarios WHERE vr_tanque = '{tank_key}'"
