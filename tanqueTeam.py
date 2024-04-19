@@ -281,7 +281,7 @@ def _handle_input_registers(client):
                 conn.commit()
             else:
                 print("Inserta el primer inventario")
-                query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp) VALUES('{tank_key}', '{fecha}', '{"{:.2f}".format(val_vol)}', '{"{:.2f}".format(val_tc)}', '{"{:.2f}".format(val_agua)}', '{"{:.2f}".format(val_temp)}')"""
+                query = f"""INSERT INTO inventarios (vr_tanque, vr_fecha, vr_volumen, vr_vol_ct, vr_agua, vr_temp, vol_ant) VALUES('{tank_key}', '{fecha}', '{"{:.2f}".format(val_vol)}', '{"{:.2f}".format(val_tc)}', '{"{:.2f}".format(val_agua)}', '{"{:.2f}".format(val_temp)}', '0')"""
                 print(query)
                 cur.execute(query)
                 conn.commit()
