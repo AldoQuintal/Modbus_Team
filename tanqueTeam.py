@@ -486,7 +486,7 @@ def setup_sync_client():
             framer=ModbusRtuFramer,
             timeout=10,
             retries=0,
-                retry_on_empty=True,
+            retry_on_empty=True,
             #    close_comm_on_error=False,.
             strict=True,
             # Serial setup parameters
